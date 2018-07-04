@@ -29,18 +29,22 @@ export class UITreeRow extends Component {
         this.node.parent = this.props.parentNode;
         this.treeTable = this.props.treeTable;
         this.state = { expanded: this.node.expanded };
+        this.node.visible = true;
+        // this.node.visible = this.node.data[this.treeTable.props.highlight.field] !== this.treeTable.props.highlight.amount;
+        console.log(this.node.visible);
     }
 
     toggle(event) {
-        if (this.state.expanded && this.treeTable.props.onNodeCollapse)
-            this.treeTable.props.onNodeCollapse({ originalEvent: event, node: this.node });
-        else if (this.treeTable.props.onNodeExpand)
-            this.treeTable.props.onNodeExpand({ originalEvent: event, node: this.node });
+        if (!this.isLeaf())
+            if (this.state.expanded && this.treeTable.props.onNodeCollapse)
+                this.treeTable.props.onNodeCollapse({ originalEvent: event, node: this.node });
+            else if (this.treeTable.props.onNodeExpand)
+                this.treeTable.props.onNodeExpand({ originalEvent: event, node: this.node });
 
-        this.node.expanded = !this.state.expanded;
-        this.setState({ expanded: !this.state.expanded });
+            this.node.expanded = !this.state.expanded;
+            this.setState({ expanded: !this.state.expanded });
 
-        event.preventDefault();
+            event.preventDefault();
     }
 
     isLeaf() {
@@ -79,10 +83,13 @@ export class UITreeRow extends Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        let expanded = nextProps.node.expanded
-        if(prevState.expanded !== expanded) {
+        console.log('update');
+        let { expanded, visible } = nextProps.node
+        console.log(visible);
+        if(prevState.expanded !== expanded && prevState.visible !== visible) {
             return {
-                expanded: expanded
+                expanded,
+                visible
             };
         }
         return null;
@@ -93,8 +100,12 @@ export class UITreeRow extends Component {
             this.node = this.props.node;
             this.node.parent = this.props.node.parentNode;
         }
-
+        var { highlight } = this.treeTable.props;
         var tableRowClass = classNames('ui-treetable-row', {
+            'empty': this.isLeaf(),
+            'hidden': this.node.visible !== true,
+            'expanded': this.state.expanded && this.node.data.type === 'user',
+            'red': parseInt(this.node.data[highlight.field]) !== highlight.amount && this.node.data.type === 'day',
             'ui-state-highlight': this.isSelected(),
             'ui-treetable-row-selectable': this.treeTable.props.selectionMode && this.node.selectable !== false
         });
@@ -105,7 +116,7 @@ export class UITreeRow extends Component {
 
         return (
             <tbody>
-                <tr className={tableRowClass}>
+                <tr className={tableRowClass} onClick={this.toggle.bind(this)}>
                     {
                         this.treeTable.columns && this.treeTable.columns.map((col, i) => {
                             var toggler = null,
@@ -113,12 +124,12 @@ export class UITreeRow extends Component {
 
                             if (i === 0) {
                                 var togglerClass = classNames('ui-treetable-toggler pi pi-fw ui-c', {
-                                    'pi-caret-down': this.state.expanded,
-                                    'pi-caret-right': !this.state.expanded
+                                    'pi-chevron-up': this.state.expanded,
+                                    'pi-chevron-down': !this.state.expanded
                                 }),
                                     togglerStyle = { 'marginLeft': this.props.level * 16 + 'px', 'visibility': this.isLeaf() ? 'hidden' : 'visible' };
 
-                                toggler = (<a className={togglerClass} style={togglerStyle} onClick={this.toggle.bind(this)} title={this.state.expanded ? this.props.labelCollapse : this.props.labelExpand}><span></span></a>);
+                                toggler = (<a className={togglerClass} style={togglerStyle} title={this.state.expanded ? this.props.labelCollapse : this.props.labelExpand}><span></span></a>);
 
                                 if (this.treeTable.props.selectionMode === 'checkbox') {
                                     var checkboxIconClass = classNames('ui-chkbox-icon ui-c pi', {
@@ -151,7 +162,7 @@ export class UITreeRow extends Component {
                 </tr>
                 {
                     this.node.children && this.state.expanded && (<tr className="ui-treetable-row" style={{ 'display': 'table-row' }}>
-                        <td colSpan={this.treeTable.columns.length} className="ui-treetable-child-table-container">
+                        <td colSpan={this.treeTable.columns.length} style={this.props.level === 1 ? {'paddingLeft': 16 + 'px'} : { 'paddingLeft': 0 }} className={'ui-treetable-child-table-container' + ` depth-${this.props.level + 1}`}>
                             <table>
                                 {childTbody}
                             </table>

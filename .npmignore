@@ -1,7 +1,9 @@
 .sass-cache
 node_modules
+build
 public
 src
+exports
 .gitignore
 .npmignore
 .nvmrc

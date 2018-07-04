@@ -18,6 +18,9 @@ export class TreeTableDemo extends Component {
     componentDidMount() {
         this.nodeservice.getNodes().then(data => this.setState({data: data}));
     }
+    expand = () => {
+        console.log('lol');
+    }
 
     render() {
         return (
@@ -33,7 +36,7 @@ export class TreeTableDemo extends Component {
 
                 <div className="content-section implementation">
                     <h3>Basic</h3>
-                    <TreeTable value={this.state.data} header="Basic">
+                    <TreeTable value={this.state.data} header="Basic" onNodeExpand={this.expand} highlight={{ amount: 8, field: 'spent' }}>
                         <Column field="name" header="Name"></Column>
                         <Column field="size" header="Size"></Column>
                         <Column field="type" header="Type"></Column>
@@ -206,7 +209,7 @@ render() {
             {
                 "data": {
                     "name": "Pictures",
-                    "size": "150kb",
+                    "size": 150,
                     "type": "Folder"
                 },
                 "children": [

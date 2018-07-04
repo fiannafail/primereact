@@ -3,6 +3,7 @@
 }
 
 .ui-treetable table {
+    position: relative;
 	border-collapse:collapse;
     width: 100%;
     table-layout: fixed;
@@ -45,6 +46,9 @@
 }
 
 .ui-treetable .ui-treetable-toggler {
+    color: #A6B2C4;
+    position: absolute;
+    right: 30px;
     vertical-align: middle;
     cursor: pointer;
     text-decoration: none;

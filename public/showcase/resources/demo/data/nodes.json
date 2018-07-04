@@ -4,7 +4,8 @@
             "data": {
                 "name": "Documents",
                 "size": "75kb",
-                "type": "Folder"
+                "type": "Folder",
+                "spent": 10
             },
             "children": [
                 {
@@ -26,7 +27,16 @@
                                 "name": "Resume.doc",
                                 "size": "25kb",
                                 "type": "Resume"
-                            }
+                            },
+                            "children": [
+                                {
+                                    "data": {
+                                        "name": "Invoices",
+                                        "size": "20kb",
+                                        "type": "Text"
+                                    }
+                                }
+                            ]
                         }
                     ]
                 },
@@ -51,7 +61,7 @@
         {
             "data": {
                 "name": "Pictures",
-                "size": "150kb",
+                "size": 150,
                 "type": "Folder"
             },
             "children": [
